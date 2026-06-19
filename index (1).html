@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cache Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <h1>Cache <span>Sim</span></h1>
+    </div>
+  </div>
+  <div class="header-badge">Set-Associative · V-Way TDR=2 · V-Way TDR=3</div>
+</header>
+
+<div class="main">
+
+  <!-- CONFIG CARD -->
+  <div class="section-label">01 — Configuration</div>
+  <div class="card fade-up fade-up-1">
+
+    <!-- File Upload -->
+    <div class="file-drop" id="fileDrop">
+      <input type="file" id="traceFile" accept=".txt"/>
+      <div class="icon">📁</div>
+      <div class="label">Drop your trace file here or click to browse</div>
+      <div class="sublabel">Accepts .txt files</div>
+    </div>
+    <div class="format-note">Format per line: <code>r 0x1a2b3c4d</code> or <code>w 0x1a2b3c4d</code></div>
+
+    <div class="config-grid" style="margin-top:24px;">
+      <!-- L1 -->
+      <div class="config-group">
+        <div class="config-group-title"><span class="dot"></span> L1 Cache</div>
+        <div class="fields-grid">
+          <div class="field">
+            <label>Size (bytes)</label>
+            <input type="number" id="L1_SIZE" value="32768"/>
+          </div>
+          <div class="field">
+            <label>Block Size (bytes)</label>
+            <input type="number" id="L1_BLOCK_SIZE" value="64"/>
+          </div>
+          <div class="field" style="grid-column:span 2">
+            <label>Associativity</label>
+            <input type="number" id="L1_ASSOC" value="4"/>
+          </div>
+        </div>
+      </div>
+      <!-- L2 -->
+      <div class="config-group">
+        <div class="config-group-title"><span class="dot" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></span> L2 Cache <span style="font-size:0.6rem;color:var(--text3)">(size=0 to disable)</span></div>
+        <div class="fields-grid">
+          <div class="field">
+            <label>Size (bytes)</label>
+            <input type="number" id="L2_SIZE" value="0"/>
+          </div>
+          <div class="field">
+            <label>Block Size (bytes)</label>
+            <input type="number" id="L2_BLOCK_SIZE" value="64"/>
+          </div>
+          <div class="field">
+            <label>Associativity</label>
+            <input type="number" id="L2_ASSOC" value="8"/>
+          </div>
+          <div class="field">
+            <label>L2 Type</label>
+            <select id="L2_TDR">
+              <option value="0">Set-Associative</option>
+              <option value="2">V-Way TDR=2</option>
+              <option value="3">V-Way TDR=3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="run-btn" id="runBtn" onclick="runAll()">▶ RUN SIMULATION</button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label" id="progressLabel">Initializing...</div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="section-label">02 — Miss Rate Overview</div>
+    <div class="stat-cards" id="statCards"></div>
+
+    <div class="section-label">03 — Full Statistics</div>
+    <div class="card fade-up">
+      <table class="comp-table" id="compTable"></table>
+    </div>
+
+    <div class="section-label">04 — Visual Comparison</div>
+    <div class="card fade-up">
+      <div class="charts-grid">
+        <div class="chart-box"><h3>Miss Rates (%)</h3><canvas id="chartMiss"></canvas></div>
+        <div class="chart-box"><h3>Writebacks</h3><canvas id="chartWB"></canvas></div>
+        <div class="chart-box"><h3>Read vs Write Misses</h3><canvas id="chartMissAbs"></canvas></div>
+        <div class="chart-box"><h3>Avg Victim Distance</h3><canvas id="chartVDist"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-label">05 — Raw Output</div>
+    <div class="card fade-up">
+      <div class="tabs" id="tabs"></div>
+      <div id="rawPanels"></div>
+    </div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
